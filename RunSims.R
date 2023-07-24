@@ -1,6 +1,6 @@
 # First: set working direction to source file location
 # setwd("...")
-load("SetUp.R")
+source("SetUp.R")
 
 ######################################################
 # Load in fitted incubation and delay distributions
@@ -15,7 +15,7 @@ tpd_pars <- list( "ipd_shape"=ipd.fit$estimate["shape"],
 # Set up population age structure
 # Data/counts are in 5 year intervals
 # want to extend to 1 year intervals
-# and the normalise to get frequency
+# and then normalise to get frequency
 ######################################################
 age_count <- c(199911,181492,159428,138264,120031,104678,91535,78352,64362,52212,
                42201,34235,26802,19782,13372,8018,4040,1496,337)
@@ -49,12 +49,17 @@ prop_adult <- sum(age_dist[16:length(age_dist)])/sum(age_dist) #15 and over
 # for n_runs simulations
 ######################################################
 
-# Low-level persistence
 # Average annual incidence = max_cases x persist_level
 # Run for values in seq(0,0.2,0.01)
 # i.e. a mean of 0 to 4 new cases per year
 persist_level <- 0
-filename <- "Results/exp_decline.RDS" # match file name to persistence level
+
+# Match file name to persistence level
+# For persistence: Results/persistenceXX.RDS where persist_level = 0.XX
+#   E.g. Results/persistence03.RDS for persist_level = 0.03
+# For decline to zero: Results/exp_decline.RDS
+filename <- "Results/exp_decline.RDS" 
+
 
 incidence <- matrix(0,n_years+burn_in+100,n_runs)
 diagnosed <- matrix(0,n_years+100,n_runs)
