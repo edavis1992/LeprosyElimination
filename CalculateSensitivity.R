@@ -7,7 +7,7 @@
 
 # First: set working direction to source file location
 # setwd("...")
-load("SetUp.R")
+source("SetUp.R")
 
 ######################################################
 # Read simulation outputs
@@ -27,7 +27,7 @@ last_infection <- data_list[[14]]
 # Read in situations for calculating sensitivities
 ######################################################
 
-filename <- "Results/sensitivities.RDS" #match to simulation file
+filename <- "Results/situation_exp_decline.RDS" #match to simulation file
 situ_list <- readRDS(filename)
 
 situ_5_vec <- situ_list[[1]]
@@ -50,25 +50,30 @@ situation <- situ_list[[10]]
 # final transmission event
 ######################################################
 
+sensitivities <- tibble(year = c(0, 5, 10, 15, 20),
+                        phase1 = rep(NA, 5),
+                        phase2 = rep(NA, 5),
+                        phase3 = rep(NA, 5))
+
 # 5 year
-sum(situ_5_vec>=2)/n_runs # Phase 1
-sum(situ_5_vec>=3)/n_runs # Phase 2
-sum(situ_5_vec==4)/n_runs # Phase 3
+sensitivities$phase1[2] <- sum(situ_5_vec>=2)/n_runs # Phase 1
+sensitivities$phase2[2] <- sum(situ_5_vec>=3)/n_runs # Phase 2
+sensitivities$phase3[2] <- sum(situ_5_vec==4)/n_runs # Phase 3
 
 # 10 year
-sum(situ_10_vec>=2)/n_runs # Phase 1
-sum(situ_10_vec>=3)/n_runs # Phase 2
-sum(situ_10_vec==4)/n_runs # Phase 3
+sensitivities$phase1[3] <- sum(situ_10_vec>=2)/n_runs # Phase 1
+sensitivities$phase2[3] <- sum(situ_10_vec>=3)/n_runs # Phase 2
+sensitivities$phase3[3] <- sum(situ_10_vec==4)/n_runs # Phase 3
 
 # 15 year
-sum(situ_15_vec>=2)/n_runs # Phase 1
-sum(situ_15_vec>=3)/n_runs # Phase 2
-sum(situ_15_vec==4)/n_runs # Phase 3
+sensitivities$phase1[4] <- sum(situ_15_vec>=2)/n_runs # Phase 1
+sensitivities$phase2[4] <- sum(situ_15_vec>=3)/n_runs # Phase 2
+sensitivities$phase3[4] <- sum(situ_15_vec==4)/n_runs # Phase 3
 
 # 20 year
-sum(situ_20_vec>=2)/n_runs # Phase 1
-sum(situ_20_vec>=3)/n_runs # Phase 2
-sum(situ_20_vec==4)/n_runs # Phase 3
+sensitivities$phase1[5] <- sum(situ_20_vec>=2)/n_runs # Phase 1
+sensitivities$phase2[5] <- sum(situ_20_vec>=3)/n_runs # Phase 2
+sensitivities$phase3[5] <- sum(situ_20_vec==4)/n_runs # Phase 3
 
 ######################################################
 # Calculate 1-specificity:
@@ -90,6 +95,8 @@ for(n in 1:n_runs){
 }
 
 # <0 year sensitivity (= 1 - specificity)
-sum((first_1_to_2-last_infection)<0)/5000 # Phase 1
-sum((first_2_to_3-last_infection)<0)/5000 # Phase 2
-sum((first_3_to_4-last_infection)<0)/5000 # Phase 3
+sensitivities$phase1[1] <- sum((first_1_to_2-last_infection)<0)/5000 # Phase 1
+sensitivities$phase2[1] <- sum((first_2_to_3-last_infection)<0)/5000 # Phase 2
+sensitivities$phase3[1] <- sum((first_3_to_4-last_infection)<0)/5000 # Phase 3
+
+saveRDS(sensitivities, "Results/sensitivities.RDS")
