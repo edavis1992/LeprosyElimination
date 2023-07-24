@@ -3,9 +3,10 @@ library(zoo)
 library(tictoc)
 library(arm)
 library(gridExtra)
+library(cowplot)
 
 load('no_mi_tpd.Rd')
-load("Functions.R")
+source("GetSituation.R")
 
 ######################################################
 # Set parameters
